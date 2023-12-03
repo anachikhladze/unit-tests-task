@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class NetworkManager {
+final class NetworkManager: NetworkManagerProtocol {
     
     static let shared = NetworkManager()
     private let productsUrlString = "https://dummyjson.com/products"
@@ -38,5 +38,18 @@ final class NetworkManager {
                 completion(.failure(error))
             }
         }.resume()
+    }
+}
+
+final class MockNetworkManager: NetworkManagerProtocol {
+    var products: [Product]?
+    var error: Error?
+
+    func fetchProducts(completion: @escaping (Result<[Product]?, Error>) -> Void) {
+        if let error = error {
+            completion(.failure(error))
+        } else {
+            completion(.success(products))
+        }
     }
 }

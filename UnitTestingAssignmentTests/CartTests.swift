@@ -11,24 +11,25 @@ import XCTest
 final class CartTests: XCTestCase {
     
     var viewModel: CartViewModel!
-       
-       override func setUp() {
-           super.setUp()
-           viewModel = CartViewModel()
-           viewModel.allproducts = [Product(id: 1, price: 10.0, selectedQuantity: 2),
-                                    Product(id: 2, price: 20.0, selectedQuantity: 3)]
-       }
-       
-       override func tearDown() {
-           viewModel = nil
-           super.tearDown()
-       }
+    
+    override func setUp() {
+        super.setUp()
+        let mockNetworkManager = MockNetworkManager()
+        viewModel = CartViewModel(networkManager: mockNetworkManager)
+        viewModel.allproducts = [Product(id: 1, price: 10.0, selectedQuantity: 2),
+                                 Product(id: 2, price: 20.0, selectedQuantity: 3)]
+    }
+    
+    override func tearDown() {
+        viewModel = nil
+        super.tearDown()
+    }
     
     func testSelectedItemsQuantity() {
         // Given (Arrange)
         let firstProduct = Product(id: 1, price: 10.0, selectedQuantity: 2)
         let secondProduct = Product(id: 2, price: 20.0, selectedQuantity: 3)
-       
+        
         // When (Act)
         viewModel.addProduct(product: firstProduct)
         viewModel.addProduct(product: secondProduct)
@@ -41,7 +42,7 @@ final class CartTests: XCTestCase {
         // Given (Arrange)
         let firstProduct = Product(id: 1, price: 10.0, selectedQuantity: 2)
         let secondProduct = Product(id: 2, price: 20.0, selectedQuantity: 3)
-       
+        
         // When (Act)
         viewModel.addProduct(product: firstProduct)
         viewModel.addProduct(product: secondProduct)
@@ -99,5 +100,14 @@ final class CartTests: XCTestCase {
         // Then (Assert)
         XCTAssertTrue(viewModel.selectedProducts.isEmpty)
     }
-
+    
+    func testFetchProducts() {
+        let mockNetworkManager = MockNetworkManager()
+        let viewModel = CartViewModel(networkManager: mockNetworkManager)
+        
+        mockNetworkManager.products = ProductsResponse.dummyProducts
+        viewModel.fetchProducts()
+        XCTAssertNotNil(viewModel.allproducts)
+        XCTAssertEqual(viewModel.allproducts?.count, ProductsResponse.dummyProducts.count)
+    }
 }

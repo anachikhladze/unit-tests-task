@@ -12,8 +12,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        let cartViewModel = CartViewModel()
-        cartViewModel.viewDidLoad()
+        
+        let mockNetworkManager = MockNetworkManager()
+        let viewModel = CartViewModel(networkManager: mockNetworkManager)
+        viewModel.viewDidLoad()
     }
 }
 

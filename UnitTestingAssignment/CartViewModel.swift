@@ -7,11 +7,21 @@
 
 import Foundation
 
+protocol NetworkManagerProtocol {
+    func fetchProducts(completion: @escaping (Result<[Product]?, Error>) -> Void)
+}
+
 final class CartViewModel {
     
     var allproducts: [Product]?
     
     var selectedProducts = [Product]()
+    
+    var networkManager: NetworkManagerProtocol
+    
+    init(networkManager: NetworkManagerProtocol) {
+        self.networkManager = networkManager
+    }
     
     var selectedItemsQuantity: Int? {
         selectedProducts.reduce(0) { $0 + ($1.selectedQuantity ?? 0) }
@@ -27,8 +37,8 @@ final class CartViewModel {
     
     func fetchProducts() {
         
-//        self?.allproducts = ProductsResponse.dummyProducts
-
+        self.allproducts = ProductsResponse.dummyProducts
+        
         NetworkManager.shared.fetchProducts(completion: { [weak self] products in
             switch products {
             case .success(let products):
